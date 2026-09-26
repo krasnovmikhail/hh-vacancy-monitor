@@ -16,6 +16,7 @@ token_cache.json
 # Пакеты
 .venv/
 __pycache__/
+Archive/
 
 # Логи
 *.log

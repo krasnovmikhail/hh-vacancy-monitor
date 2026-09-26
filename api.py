@@ -77,7 +77,7 @@ def make_request_with_retry(
     url, params=None, max_retries=MAX_RETRIES, timeout=30
 ):
     """Единый универсальный метод HTTP-запроса с retry-логикой для сети, 429 и таймаутов."""
-    wait_time = 3
+    wait_time = 5
 
     for attempt in range(1, max_retries + 1):
         try:
@@ -86,12 +86,12 @@ def make_request_with_retry(
             )
 
             # 1. Если HH просит снизить скорость (Rate Limit)
-            if response.status_code == 429:
+            if response.status_code in (429, 403):
                 print(
-                    f"⚠️ [429 Rate Limit] Попытка {attempt}/{max_retries}. Ждем {wait_time}с..."
+                    f"⚠️ [Rate Limit / Block {response.status_code}] Попытка {attempt}/{max_retries} для {url}. Ждем {wait_time}с..."
                 )
                 time.sleep(wait_time)
-                wait_time *= 2
+                wait_time *= 2  #экспоненциальный рост ожидания (5с -> 10с -> 20с...)
                 continue
 
             response.raise_for_status()
@@ -124,12 +124,12 @@ def get_vacancies(text, area_id=None, page=0, per_page=100):
         params["area"] = area_id
 
     # Небольшая задержка, чтобы соблюдать RPS (запросов в секунду)
-    time.sleep(0.05)
+    time.sleep(0.4)
     return make_request_with_retry(url, params=params)
 
 
 def get_vacancy_detail(vacancy_id):
     """Запрос детальной информации по ID с обработкой Rate Limit и повторами."""
     url = f"https://api.hh.ru/vacancies/{vacancy_id}"
-    time.sleep(0.05)
+    time.sleep(0.4)
     return make_request_with_retry(url)
