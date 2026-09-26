@@ -124,7 +124,7 @@ def get_vacancies(text, area_id=None, page=0, per_page=100):
         params["area"] = area_id
 
     # Небольшая задержка, чтобы соблюдать RPS (запросов в секунду)
-    time.sleep(0.4)
+    time.sleep(0.05)
     return make_request_with_retry(url, params=params)
 
 
