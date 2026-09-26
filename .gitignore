@@ -1,0 +1,21 @@
+
+# Специфичные файлы macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Секреты
+.env
+*.env
+token_cache.json
+*.json
+
+# Пакеты
+.venv/
+__pycache__/
+
+# Логи
+*.log
