@@ -17,6 +17,7 @@ token_cache.json
 .venv/
 __pycache__/
 Archive/
+.idea/
 
 # Логи
 *.log

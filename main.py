@@ -71,15 +71,18 @@ def check_and_send_hot_alert(vacancy_data):
         if not any(fmt in vacancy_formats for fmt in FILTER_WORK_FORMATS):
             return
 
-    # 4. Фильтр по НАВЫКАМ
+    # 4. Фильтр по НАВЫКАМ (мягкая проверка: каждый обязательный навык должен содержаться хотя бы в одном навыке вакансии)
     if FILTER_MUST_HAVE_SKILLS is not None:
         vacancy_skills = [
             s.lower() for s in (vacancy_data.get("key_skills") or [])
         ]
-        if not any(
-            skill.lower() in vacancy_skills for skill in FILTER_MUST_HAVE_SKILLS
-        ):
-            return
+
+        for req_skill in FILTER_MUST_HAVE_SKILLS:
+            req_lower = req_skill.lower()
+            # Проверяем, есть ли req_lower как подстрока хотя бы в одном навыке вакансии
+            found = any(req_lower in v_skill for v_skill in vacancy_skills)
+            if not found:
+                 return
 
     # --- ВСЕ ВАЛИДАЦИИ ПРОЙДЕНЫ: ФОРМИРУЕМ И ОТПРАВЛЯЕМ HTML-АЛЕРТ ---
     salary_str = (
